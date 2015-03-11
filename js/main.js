@@ -1,6 +1,6 @@
 (function(){
 	var Main={
-		MODERATOR_CHANNEL_ID : 'HOMEME-'+window.location.hostname,
+		MODERATOR_CHANNEL_ID : 'HOMEME-',
 		MODERATOR_SESSION_ID :'XYZ',   
 		MODERATOR_ID         : 'JKL', 
 		MODERATOR_SESSION    : {        
@@ -9,11 +9,12 @@
 		},
 		MODERATOR_EXTRA      : {},    
 		connection:null, 
+    isMute:false,
 		init:function(){
 			document.addEventListener('DOMContentLoaded',this.onLoad.bind(this));
 		},
 		onLoad:function(){
-			
+			this.MODERATOR_CHANNEL_ID += window.location.hostname.replace(/\W+/g, " ");
 			console.log(this.MODERATOR_CHANNEL_ID);
 			var params = [] 
 			if(window.location.hash.substr(1))params =  window.location.hash.substr(1).toLowerCase().split("/");
@@ -56,6 +57,7 @@
 				sessionid: this.MODERATOR_SESSION_ID
 			});
 			this.connection = moderator;
+      this.setConnection();
 		},
 		join:function(){
 			var participants = new RTCMultiConnection(this.MODERATOR_CHANNEL_ID);
@@ -66,12 +68,35 @@
 				session: this.MODERATOR_SESSION
 			});
 			this.connection = participants;
+      this.setConnection();
 		},
+    setConnection:function(){
+    
+this.connection.onmute =this.onMute.bind(this);
+      this.connection.onunmute =this.onUnMute.bind(this);
+    },
+    onMute:function(event){
+      this.isMute=true;
+      //e.mediaElement.setAttribute('poster', '//www.webrtc-experiment.com/images/muted.png');
+    },
+    onUnMute:function(event){
+      this.isMute=false;
+      //e.mediaElement.setAttribute('poster', '//www.webrtc-experiment.com/images/muted.png');
+    },
 		toggleMute:function(){
-			this.connection.streams.mute({
-				video: true,
+      console.log(this.isMute);
+      if(!this.isMute){
+        this.connection.streams.mute({
+				video: false,
 				type: 'local'
 			});
+      }else{
+        this.connection.streams.unmute({
+				video: false,
+				type: 'local'
+			});
+      }
+			
 		}
 	};
 
