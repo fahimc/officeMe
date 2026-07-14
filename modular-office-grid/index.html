@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modular 2D Office Grid</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">OG</div>
+        <div>
+          <h1>Modular Office Grid</h1>
+          <p>Flat 2D rooms, shared doors, blockers and character pathfinding</p>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <select id="characterSelect" aria-label="Selected character"></select>
+        <button class="tool-button" id="toggleModules">Module grid</button>
+        <button class="tool-button" id="toggleNavigation">Navigation</button>
+        <button class="tool-button active" id="togglePaths">Paths</button>
+        <button class="tool-button active" id="toggleRoam">Auto roam</button>
+        <button class="tool-button" id="togglePause">Pause</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="scene-panel">
+        <div class="canvas-shell">
+          <canvas id="officeCanvas"></canvas>
+          <div id="characterLayer" class="character-layer" aria-hidden="false"></div>
+
+          <div class="canvas-hud">
+            <span class="hud-chip">4 × 3 room-module grid · 48 × 27 navigation tiles</span>
+            <span class="hud-chip">Click a character, then click any walkable floor tile</span>
+          </div>
+
+          <div class="canvas-help">
+            Every room inherits from <strong>BaseRoom</strong>. The base class draws the
+            floor, shared walls and door openings, then registers walkable cells and
+            furniture blockers. Derived room classes only add their own content.
+          </div>
+        </div>
+      </section>
+
+      <aside class="side-panel">
+        <section class="section">
+          <p class="eyebrow">Selected room</p>
+          <div class="info-card">
+            <h2 class="info-title" id="roomName">Reception</h2>
+            <p class="info-subtitle" id="roomClass">ReceptionRoom</p>
+
+            <div class="info-grid">
+              <div class="metric">
+                <span>Modules</span>
+                <strong id="roomModules">1 × 1</strong>
+              </div>
+              <div class="metric">
+                <span>Doors</span>
+                <strong id="roomDoors">0</strong>
+              </div>
+              <div class="metric">
+                <span>Blockers</span>
+                <strong id="roomBlockers">0</strong>
+              </div>
+              <div class="metric">
+                <span>Tile size</span>
+                <strong>24 px</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card" style="margin-top:9px;">
+            <h2 class="info-title" id="characterName">Maya</h2>
+            <p class="info-subtitle" id="characterRole">Project Manager</p>
+            <div class="info-grid">
+              <div class="metric">
+                <span>Current path</span>
+                <strong id="characterPath">Idle</strong>
+              </div>
+              <div class="metric">
+                <span>Movement</span>
+                <strong>A*</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <p class="eyebrow">Room modules</p>
+          <h2>Grid layout</h2>
+          <div class="room-list" id="roomList"></div>
+        </section>
+
+        <section class="section">
+          <p class="eyebrow">Architecture</p>
+          <div class="legend">
+            <div class="legend-item"><span class="legend-dot" style="background:#58e0da"></span>Walkable</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#ff6b6b"></span>Blocked</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#ffb662"></span>Module grid</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#4aa7ff"></span>Door threshold</div>
+          </div>
+
+          <pre class="architecture">BaseRoom
+├─ ReceptionRoom
+├─ DeveloperRoom
+├─ DesignerRoom
+├─ PMRoom
+├─ ToiletRoom
+├─ CoffeeRoom
+└─ MeetingRoom
+
+OfficeScene
+├─ RoomFactory
+├─ NavigationGrid
+└─ OfficeCharacter</pre>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script src="core.js"></script>
+  <script src="rooms.js"></script>
+  <script src="character.js"></script>
+  <script src="scene.js"></script>
+</body>
+</html>
